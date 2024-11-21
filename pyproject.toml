@@ -1,0 +1,24 @@
+[project]
+name = "random_forest_svm"
+version = "0.0.1"
+description = "Random forest with SVM in the classification task."
+authors = [
+  { name = "M&M" },
+]
+
+readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    
+]
+requires-python = "~=3.12"
+
+[tool.black]
+line-length = 99
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.venv
+)/
+'''
