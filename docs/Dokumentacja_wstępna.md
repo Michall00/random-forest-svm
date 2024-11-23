@@ -7,12 +7,14 @@ Połączenie lasu losowego z SVM w zadaniu klasyfikacji. Postępujemy tak jak pr
 
 # Interpretacja i doprecyzowanie treści zadania
 Celem zadania jest stworzenie hybrydowego modelu klasyfikatora, który łączy drzewa ID3 i maszyny wektorów nośnych (SVM).
+
 ## Algorytmy
 1. Drzewo decyzyjne (ID3): Zaimplementujemy algorytm ID3 do budowy drzew decyzyjnych, który wybiera podział w węźle na podstawie maksymalizacji zysku informacyjnego (information gain).
 2. SVM (Support Vector Machine): Będziemy korzystać z dostepnej implemenacji SVM z biblioteki [scikit-learn](https://scikit-learn.org/1.5/modules/svm.html).
+
 ## Integracja w modelu hybrydowym:
 
-- Dla każdego drzewa losowego generujemy losowy podzbiór danych treningowych oraz losowy podzbiór cech.
+- Dla każdego klasyfikatora generujemy losowy podzbiór danych treningowych oraz losowy podzbiór cech.
 - Co drugi klasyfikator jest zastępowany SVM.
 Wynik końcowy jest określany na podstawie głosowania większościowego.
 
@@ -30,6 +32,7 @@ H(D) - entropia zbioru danych D obliczana jako
 3. Wybieramy cechę A o maksymalnym IG(A) jako kryterium podziału.
 4. Tworzymy nowe węzły dla każdej wartości cechy A.
 5. Powtarzamy proces, aż wszystkie przykłady w węźle należą do tej samej klasy lub osiągniemy maksymalną głębokość drzewa.
+   
 ## SVM
 
 1. Na wejściu mamy zbiór danych:
@@ -51,20 +54,20 @@ H(D) - entropia zbioru danych D obliczana jako
    - b - bias,
    - x_i -: zmienne slack pozwalające na błędną klasyfikację,
    - C - parametr regularyzacji.
-   - ξ_i - zmienne tolerancji
+   - $\xi_i$ - zmienne tolerancji
 
-3. W przypadku nieliniowych danych stosujemy funkcję jądra , np. RBF:
+3. W przypadku nieliniowych danych stosujemy funkcję jądra RBF:
    $$
    K(\mathbf{x}_i, \mathbf{x}_j) = \exp\left(-\gamma \|\mathbf{x}_i - \mathbf{x}_j\|^2\right)
    $$
 
 ## Integracja (las hybrydowy)
 
-1. Wygeneruj N klasyfikatorów
-    - Dla nieparzystych i: stwórz drzewo **ID3** na losowym podzbiorze danych i cech.
-    - Dla parzystych i: wytrenuj **SVM** na losowym podzbiorze danych i cech.
-2. Podczas predykcji przeprowadź głosowanie większościowe wśród klasyfikatorów.
-    - Dla każdej próbki wybierz klasę y z największą liczbą głosów.
+1. Wygenerujemy N klasyfikatorów
+    - Dla nieparzystych i: stwórzymy drzewo **ID3** na losowym podzbiorze danych i cech.
+    - Dla parzystych i: wytrenujemy **SVM** na losowym podzbiorze danych i cech.
+2. Podczas predykcji przeprowadzimy głosowanie większościowe wśród klasyfikatorów.
+    - Dla każdej próbki wybierzemy klasę y z największą liczbą głosów.
 
 # Planowane eksperymenty
 
@@ -84,7 +87,7 @@ H(D) - entropia zbioru danych D obliczana jako
 - Liczba klas: 2 (churn lub nie churn)
 - Liczba cech: 21 (informacje o klientach, użycie usług).
 
-Walidacja modeli zostanie przeprowadzona za pomocą walidacji krzyżowej z podziałem na 5 podzbiorów (5-fold cross-validation).
+**Walidacja modeli zostanie przeprowadzona za pomocą walidacji krzyżowej z podziałem na 5 podzbiorów.**
 
 
 ## Eksperymenty numeryczne
@@ -109,38 +112,28 @@ Walidacja modeli zostanie przeprowadzona za pomocą walidacji krzyżowej z podzi
 
 - **Opis:**  
   Modele będą testowane na trzech wybranych zbiorach danych (Iris, Wine Quality, Telecom Churn). Dla każdego zbioru porównamy dokładność, F1, precyzję i czułość trzech wariantów klasyfikatorów:
-  1. Hybrydowy model (ID3 + SVM).
+  1. Hybrydowy model (ID3 + SVM) - najlepszy(wyłoniony podczas poprzednich eksperymentów).
   2. Klasyczny las losowy z drzewami ID3.
   3. Sam SVM jako oddzielny klasyfikator.
 
-- **Hiperparametry do testowania:**
-  - **Liczba klasyfikatorów w lesie** N: 10, 50, 100.
-  - **Parametr C** dla SVM: 0.1, 1, 10, 100.
-  - **Głębokość maksymalna drzew**: 3, 5, brak limitu.
-
-
-**Podane wartosci są orientacyjne po przeprowadzeniu eksprymentów dostosujemy przestrzeń przeszukiwań parametrów w celu znalezianie jak najlepszego modelu**
+**Podane wartości hiperparametrów są orientacyjne po przeprowadzeniu eksprymentów dostosujemy przestrzeń przeszukiwań parametrów w celu znalezianie jak najlepszego modelu**
 
 **Każdy z eksprymentów zostanie przeprowadzony kilka razy a wyniki zostaną uśrednione.**
   
 # Metryki
-- 
-    $$
+-   $$
     \text{Dokładność} = \frac{\text{TP} + \text{TN}}{\text{TP} + \text{TN} + \text{FP} + \text{FN}}
     $$
-- 
-    $$  
+-   $$  
     \text{F1} = 2 \cdot \frac{\text{Precyzja} \cdot \text{Czułość}}{\text{Precyzja} + \text{Czułość}}
     $$
-- 
-    $$
+-   $$
     \text{Precyzja} = \frac{\text{TP}}{\text{TP} + \text{FP}}
     $$
-- 
-    $$
+-   $$
     \text{Czułość} = \frac{\text{TP}}{\text{TP} + \text{FN}}
     $$
-- 
+-   
     <div align="center">
     Macierz pomyłek
     </div>
