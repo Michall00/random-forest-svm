@@ -4,7 +4,6 @@
 
 PROJECT_NAME = UMA-random_forest-SVM
 PYTHON_VERSION = 3.12
-PYTHON_INTERPRETER = python
 
 #################################################################################
 # COMMANDS                                                                      #
@@ -14,11 +13,9 @@ PYTHON_INTERPRETER = python
 ## Install Python Dependencies
 .PHONY: requirements
 requirements:
-	$(PYTHON_INTERPRETER) -m pip install -U pip
-	$(PYTHON_INTERPRETER) -m pip install -r requirements.txt
+	pip install uv
+	uv sync
 	
-
-
 
 ## Delete all compiled Python files
 .PHONY: clean
@@ -29,18 +26,21 @@ clean:
 ## Lint using flake8 and black (use `make format` to do formatting)
 .PHONY: lint
 lint:
-	flake8 random_forest_svm
-	isort --check --diff --profile black random_forest_svm
-	black --check --config pyproject.toml random_forest_svm
+	uv run flake8 random_forest_svm
+	uv run isort --check --diff --profile black random_forest_svm/
+	uv run black --check --config pyproject.toml random_forest_svm/
 
 ## Format source code with black
 .PHONY: format
 format:
-	black --config pyproject.toml random_forest_svm
+	uv run black --config pyproject.toml random_forest_svm
 
 
-
-
+## Download and preprocess data
+.PHONY: prepare_data
+prepare_data:
+	uv run python random_forest_svm/data/download_data.py
+	uv run python random_forest_svm/data/preprocess_data.py
 
 
 #################################################################################
@@ -65,4 +65,4 @@ endef
 export PRINT_HELP_PYSCRIPT
 
 help:
-	@$(PYTHON_INTERPRETER) -c "${PRINT_HELP_PYSCRIPT}" < $(MAKEFILE_LIST)
+	@uv run python -c "${PRINT_HELP_PYSCRIPT}" < $(MAKEFILE_LIST)
