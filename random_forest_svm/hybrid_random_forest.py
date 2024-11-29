@@ -25,21 +25,27 @@ class HybridRandomForest:
         if not (0 <= subsample <= 1):
             raise ValueError("Parameter subsample must be in range [0, 1].")
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> None:
-        n_samples, _ = X.shape
+    def fit(
+        self, X_svm: np.ndarray, y_svm: np.ndarray, X_id3: np.ndarray, y_id3: np.ndarray
+    ) -> None:
+        n_samples, _ = X_svm.shape
         n_svm = int(self.n_classifiers * self.proportion_svm)
         n_selected_samples = int(n_samples * self.subsample)
 
         for cls_idx in range(self.n_classifiers):
             sample_idxs = np.random.choice(n_samples, n_selected_samples, replace=False)
-            _X, _y = X[sample_idxs, :], y[sample_idxs]
+            X, y = (
+                X_svm[sample_idxs, :],
+                y_svm[sample_idxs] if cls < n_svm else X_id3[sample_idxs, :],
+                y_id3[sample_idxs],
+            )
 
             cls = (
                 SVC(**self.svm_params, probability=True)
                 if cls_idx < n_svm
                 else ID3(**self.id3_params, criterion="entropy")
             )
-            cls.fit(_X, _y)
+            cls.fit(X, y)
             self.classifiers.append(cls)
 
     def predict(self, X: np.ndarray) -> np.ndarray:
