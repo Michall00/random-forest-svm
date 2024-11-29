@@ -35,9 +35,9 @@ class HybridRandomForest:
         for cls_idx in range(self.n_classifiers):
             sample_idxs = np.random.choice(n_samples, n_selected_samples, replace=False)
             X, y = (
-                X_svm[sample_idxs, :],
-                y_svm[sample_idxs] if cls < n_svm else X_id3[sample_idxs, :],
-                y_id3[sample_idxs],
+                (X_svm[sample_idxs, :], y_svm[sample_idxs])
+                if cls_idx < n_svm
+                else (X_id3[sample_idxs, :], y_id3[sample_idxs])
             )
 
             cls = (
@@ -48,6 +48,29 @@ class HybridRandomForest:
             cls.fit(X, y)
             self.classifiers.append(cls)
 
-    def predict(self, X: np.ndarray) -> np.ndarray:
-        predictions = np.array([clf.predict(X) for clf in self.classifiers])
-        return mode(predictions, axis=0).mode[0]
+    def predict(self, X_svm: np.ndarray, X_id3: np.ndarray) -> np.ndarray:
+        n_samples = X_svm.shape[0]
+        predictions = np.zeros((self.n_classifiers, n_samples))
+
+        for cls_idx, clf in enumerate(self.classifiers):
+            if isinstance(clf, SVC):
+                predictions[cls_idx] = clf.predict(X_svm)
+            else:
+                predictions[cls_idx] = clf.predict(X_id3)
+
+        return mode(predictions, axis=0).mode
+
+
+if __name__ == "__main__":
+    from random_forest_svm.data.load_data import load_iris
+
+    X_svm, y_svm, X_id3, y_id3 = load_iris()
+
+    svm_params = {"C": 1.0, "kernel": "rbf", "gamma": "scale"}
+
+    id3_params = {"max_depth": None, "min_samples_split": 2, "min_samples_leaf": 1}
+
+    hybrid_rf = HybridRandomForest(n_classifiers=10, svm_params=svm_params, id3_params=id3_params)
+    hybrid_rf.fit(X_svm, y_svm, X_id3, y_id3)
+
+    print(hybrid_rf.predict(X_svm, X_id3))
