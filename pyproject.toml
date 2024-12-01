@@ -12,6 +12,13 @@ classifiers = [
     
 ]
 requires-python = "~=3.12"
+dependencies = [
+    "ipykernel>=6.29.5",
+    "matplotlib>=3.9.2",
+    "pandas>=2.2.3",
+    "scikit-learn>=1.5.2",
+    "ucimlrepo>=0.0.7",
+]
 
 [tool.black]
 line-length = 99
@@ -22,3 +29,8 @@ exclude = '''
   | \.venv
 )/
 '''
+
+[dependency-groups]
+dev = [
+    "isort>=5.13.2",
+]
