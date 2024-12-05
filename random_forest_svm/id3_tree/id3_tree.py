@@ -52,8 +52,8 @@ class ID3:
             left_mask = X[:, best_feature] <= best_split
             right_mask = X[:, best_feature] > best_split
 
-            tree[feature_name]['<='] = self._id3(X[left_mask], y[left_mask], remaining_features)
-            tree[feature_name]['>'] = self._id3(X[right_mask], y[right_mask], remaining_features)
+            tree[feature_name][f'<= {best_split}'] = self._id3(X[left_mask], y[left_mask], remaining_features)
+            tree[feature_name][f'> {best_split}'] = self._id3(X[right_mask], y[right_mask], remaining_features)
         else:
             for value in np.unique(X[:, best_feature]):
                 subtree = self._id3(X[X[:, best_feature] == value], y[X[:, best_feature] == value], remaining_features)
@@ -71,14 +71,15 @@ class ID3:
             feature = next(iter(tree))
             subtree = tree[feature]
 
-            if '<=' in subtree and '>' in subtree:
-                split_value = list(subtree.keys())[0]
-                if x[feature] <= split_value:
-                    tree = subtree['<=']
+            if any(op in key for key in subtree.keys() for op in ['<=', '>']):
+                split_key = next(iter(subtree))
+                split_value = float(split_key.split()[1])
+                if x[self.feature_names.index(feature)] <= split_value:
+                    tree = subtree[f'<= {split_value}']
                 else:
-                    tree = subtree['>']
+                    tree = subtree[f'> {split_value}']
             else:
-                value = x[feature]
+                value = x[self.feature_names.index(feature)]
                 tree = subtree.get(value, subtree.get('default'))
 
         return tree
@@ -103,3 +104,23 @@ if __name__ == "__main__":
     id3.fit(X, y, features)
     print("Decision Tree for dicreate values:")
     print(id3.tree)
+
+    data_continuous = pd.DataFrame({
+        'Feature1': [2.5, 3.6, 1.2, 4.8, 3.3, 2.1, 5.0, 1.8, 3.7, 2.9],
+        'Feature2': [1.1, 2.2, 3.3, 4.4, 5.5, 1.2, 2.3, 3.4, 4.5, 5.6],
+        'Label': ['A', 'B', 'A', 'B', 'A', 'A', 'B', 'A', 'B', 'A']
+    })
+
+    feature_names_continuous = data_continuous.columns[:-1].tolist()
+    X_continuous = data_continuous.iloc[:, :-1].values
+    y_continuous = data_continuous.iloc[:, -1].values
+    features_continuous = list(range(X_continuous.shape[1]))
+
+    id3_continuous = ID3(feature_names_continuous)
+    id3_continuous.fit(X_continuous, y_continuous, features_continuous)
+    print("\nDecision Tree for continious values:")
+    print(id3_continuous.tree)
+
+    predictions_continuous = id3_continuous.predict(X_continuous)
+    print("Predict for coutinious data:")
+    print(predictions_continuous)
