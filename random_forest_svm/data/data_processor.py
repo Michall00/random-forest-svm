@@ -50,6 +50,8 @@ class WineQualityDataProcessor(DataProcessor):
         super().process_data()
 
     def apply_standardization(self) -> None:
+        self.svm_df["color"] = self.svm_df["color"].apply(lambda x: 1 if x == "red" else 0)
+        self.id3_df["color"] = self.id3_df["color"].apply(lambda x: 1 if x == "red" else 0)
         columns_to_log = [
             "residual_sugar",
             "chlorides",

@@ -1,35 +1,36 @@
 import numpy as np
-from typing import Any, Union
+from typing import Any, Union, Optional
 from random_forest_svm.utils.id3_utils import find_best_split, information_gain
 from collections import defaultdict
 
 
 class ID3:
     def __init__(self,
-                 feature_names: list[str],
                  max_depth: int = None,
                  min_samples_split: int = 2,
                  min_samples_leaf: int = 1):
         """Initialize the ID3 decision tree with hyperparameters."""
         self.tree = {}
-        self.feature_names = feature_names
         self.max_depth = max_depth
         self.min_samples_split = min_samples_split
         self.min_samples_leaf = min_samples_leaf
 
     def fit(self,
             X: np.ndarray,
-            y: np.ndarray,
-            features: list[int]) -> None:
+            y: np.ndarray) -> None:
         """Fit the ID3 decision tree to the data."""
-        self.tree = self._id3(X, y, features, depth=0)
+        self._all_features = list(range(X.shape[1]))
+        self.tree = self._id3(X, y, depth=0)
 
     def _id3(self,
              X: np.ndarray,
              y: np.ndarray,
-             features: list[int],
-             depth: int) -> Union[dict[str, Any], Any]:
+             depth: int,
+             features: Optional[list[int]] = None,
+             ) -> Union[dict[str, Any], Any]:
         """Recursively build the ID3 decision tree."""
+        if features is None:
+            features = self._all_features
         unique_classes, counts = np.unique(y, return_counts=True)
         if len(unique_classes) == 1:
             return unique_classes[0]
@@ -62,18 +63,17 @@ class ID3:
 
         tree = defaultdict(dict)
         remaining_features = [f for f in features if f != best_feature]
-        feature_name = self.feature_names[best_feature]
 
         if best_split is not None:
             left_mask = X[:, best_feature] <= best_split
             right_mask = X[:, best_feature] > best_split
 
-            tree[feature_name][f'<= {best_split}'] = self._id3(X[left_mask], y[left_mask], remaining_features, depth + 1)
-            tree[feature_name][f'> {best_split}'] = self._id3(X[right_mask], y[right_mask], remaining_features, depth + 1)
+            tree[best_feature][f'<= {best_split}'] = self._id3(X[left_mask], y[left_mask], depth + 1, remaining_features)
+            tree[best_feature][f'> {best_split}'] = self._id3(X[right_mask], y[right_mask], depth + 1, remaining_features)
         else:
             for value in np.unique(X[:, best_feature]):
-                subtree = self._id3(X[X[:, best_feature] == value], y[X[:, best_feature] == value], remaining_features, depth + 1)
-                tree[feature_name][value] = subtree
+                subtree = self._id3(X[X[:, best_feature] == value], y[X[:, best_feature] == value], depth + 1, remaining_features)
+                tree[best_feature][value] = subtree
 
         return dict(tree)
 
@@ -93,12 +93,12 @@ class ID3:
             if any(op in key for key in subtree.keys() for op in ['<=', '>']):
                 split_key = next(iter(subtree))
                 split_value = float(split_key.split()[1])
-                if x[self.feature_names.index(feature)] <= split_value:
+                if x[self._all_features[feature]] <= split_value:
                     tree = subtree[f'<= {split_value}']
                 else:
                     tree = subtree[f'> {split_value}']
             else:
-                value = x[self.feature_names.index(feature)]
+                value = x[self._all_features[feature]]
                 tree = subtree.get(value, subtree.get('default'))
 
         return tree
@@ -127,8 +127,8 @@ if __name__ == "__main__":
     y = data[:, -1]
     features = list(range(X.shape[1]))
 
-    id3 = ID3(feature_names=feature_names, max_depth=4, min_samples_split=2, min_samples_leaf=2)
-    id3.fit(X, y, features)
+    id3 = ID3(max_depth=4, min_samples_split=2, min_samples_leaf=2)
+    id3.fit(X, y)
     print("Decision Tree for discrete values:")
     print(id3.tree)
 
@@ -150,8 +150,8 @@ if __name__ == "__main__":
     y_continuous = data_continuous[:, -1]
     features_continuous = list(range(X_continuous.shape[1]))
 
-    id3_continuous = ID3(feature_names_continuous)
-    id3_continuous.fit(X_continuous, y_continuous, features_continuous)
+    id3_continuous = ID3()
+    id3_continuous.fit(X_continuous, y_continuous)
     print("\nDecision Tree for continuous values:")
     print(id3_continuous.tree)
 

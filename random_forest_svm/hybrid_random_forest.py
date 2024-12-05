@@ -1,6 +1,6 @@
 import numpy as np
 from sklearn.svm import SVC
-from sklearn.tree import DecisionTreeClassifier as ID3
+from random_forest_svm.id3_tree.id3_tree import  ID3
 from scipy.stats import mode
 
 
@@ -43,7 +43,7 @@ class HybridRandomForest:
             cls = (
                 SVC(**self.svm_params, probability=True)
                 if cls_idx < n_svm
-                else ID3(**self.id3_params, criterion="entropy")
+                else ID3(**self.id3_params)
             )
             cls.fit(X, y)
             self.classifiers.append(cls)
@@ -62,9 +62,9 @@ class HybridRandomForest:
 
 
 if __name__ == "__main__":
-    from random_forest_svm.data.load_data import load_iris
+    from random_forest_svm.data.load_data import load_churn, load_wine_quality
 
-    X_svm, y_svm, X_id3, y_id3 = load_iris()
+    X_svm, y_svm, X_id3, y_id3 = load_wine_quality()
 
     svm_params = {"C": 1.0, "kernel": "rbf", "gamma": "scale"}
 
