@@ -105,41 +105,56 @@ class ID3:
 
 
 if __name__ == "__main__":
-    import pandas as pd
-    data = pd.DataFrame({
-        'Outlook': ['Overcast', 'Sunny', 'Overcast', 'Rain', 'Rain', 'Rain', 'Overcast', 'Overcast', 'Overcast', 'Rain', 'Overcast', 'Overcast', 'Overcast', 'Rain'],
-        'Temperature': ['Hot', 'Hot', 'Hot', 'Mild', 'Cool', 'Cool', 'Cool', 'Mild', 'Cool', 'Mild', 'Mild', 'Mild', 'Hot', 'Mild'],
-        'Humidity': ['High', 'High', 'High', 'High', 'Normal', 'Normal', 'Normal', 'High', 'Normal', 'Normal', 'Normal', 'High', 'Normal', 'High'],
-        'Wind': ['Weak', 'Strong', 'Weak', 'Weak', 'Weak', 'Strong', 'Strong', 'Weak', 'Weak', 'Weak', 'Strong', 'Strong', 'Weak', 'Strong'],
-        'PlayTennis': ['No', 'No', 'Yes', 'Yes', 'Yes', 'No', 'Yes', 'No', 'Yes', 'Yes', 'Yes', 'Yes', 'Yes', 'No']
-    })
+    data = np.array([
+        ['Overcast', 'Hot', 'High', 'Weak', 'No'],
+        ['Sunny', 'Hot', 'High', 'Strong', 'No'],
+        ['Overcast', 'Hot', 'High', 'Weak', 'Yes'],
+        ['Rain', 'Mild', 'High', 'Weak', 'Yes'],
+        ['Rain', 'Cool', 'Normal', 'Weak', 'Yes'],
+        ['Rain', 'Cool', 'Normal', 'Strong', 'No'],
+        ['Overcast', 'Cool', 'Normal', 'Strong', 'Yes'],
+        ['Overcast', 'Mild', 'High', 'Weak', 'No'],
+        ['Overcast', 'Cool', 'Normal', 'Weak', 'Yes'],
+        ['Rain', 'Mild', 'Normal', 'Weak', 'Yes'],
+        ['Overcast', 'Mild', 'Normal', 'Strong', 'Yes'],
+        ['Overcast', 'Mild', 'High', 'Strong', 'Yes'],
+        ['Overcast', 'Hot', 'Normal', 'Weak', 'Yes'],
+        ['Rain', 'Mild', 'High', 'Strong', 'No']
+    ])
 
-    feature_names = data.columns[:-1].tolist()
-    X = data.iloc[:, :-1].values
-    y = data.iloc[:, -1].values
+    feature_names = ['Outlook', 'Temperature', 'Humidity', 'Wind']
+    X = data[:, :-1]
+    y = data[:, -1]
     features = list(range(X.shape[1]))
 
     id3 = ID3(feature_names=feature_names, max_depth=4, min_samples_split=2, min_samples_leaf=2)
     id3.fit(X, y, features)
-    print("Decision Tree for dicreate values:")
+    print("Decision Tree for discrete values:")
     print(id3.tree)
 
-    data_continuous = pd.DataFrame({
-        'Feature1': [2.5, 3.6, 1.2, 4.8, 3.3, 2.1, 5.0, 1.8, 3.7, 2.9],
-        'Feature2': [1.1, 2.2, 3.3, 4.4, 5.5, 1.2, 2.3, 3.4, 4.5, 5.6],
-        'Label': ['A', 'B', 'A', 'B', 'A', 'A', 'B', 'A', 'B', 'A']
-    })
+    data_continuous = np.array([
+        [2.5, 1.1, 'A'],
+        [3.6, 2.2, 'B'],
+        [1.2, 3.3, 'A'],
+        [4.8, 4.4, 'B'],
+        [3.3, 5.5, 'A'],
+        [2.1, 1.2, 'A'],
+        [5.0, 2.3, 'B'],
+        [1.8, 3.4, 'A'],
+        [3.7, 4.5, 'B'],
+        [2.9, 5.6, 'A']
+    ])
 
-    feature_names_continuous = data_continuous.columns[:-1].tolist()
-    X_continuous = data_continuous.iloc[:, :-1].values
-    y_continuous = data_continuous.iloc[:, -1].values
+    feature_names_continuous = ['Feature1', 'Feature2']
+    X_continuous = data_continuous[:, :-1].astype(float)
+    y_continuous = data_continuous[:, -1]
     features_continuous = list(range(X_continuous.shape[1]))
 
     id3_continuous = ID3(feature_names_continuous)
     id3_continuous.fit(X_continuous, y_continuous, features_continuous)
-    print("\nDecision Tree for continious values:")
+    print("\nDecision Tree for continuous values:")
     print(id3_continuous.tree)
 
     predictions_continuous = id3_continuous.predict(X_continuous)
-    print("Predict for coutinious data:")
+    print("Predictions for continuous data:")
     print(predictions_continuous)
