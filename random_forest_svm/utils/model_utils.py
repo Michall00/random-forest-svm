@@ -12,5 +12,8 @@ def information_gain(X: np.ndarray, y: np.ndarray, feature: int) -> float:
     """Calculate the information gain of a feature."""
     total_entropy = entropy(y)
     values, counts = np.unique(X[:, feature], return_counts=True)
-    weighted_entropy = np.sum((counts[i] / np.sum(counts)) * entropy(y[X[:, feature] == values[i]]) for i in range(len(values)))
+    weighted_entropy = np.sum(
+        (counts[i] / np.sum(counts)) * entropy(y[X[:, feature] == values[i]])
+        for i in range(len(values))
+    )
     return total_entropy - weighted_entropy

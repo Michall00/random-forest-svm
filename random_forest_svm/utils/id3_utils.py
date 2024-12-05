@@ -16,10 +16,15 @@ def information_gain(X: np.ndarray, y: np.ndarray, feature: int, split: float = 
         right_mask = X[:, feature] > split
         left_entropy = entropy(y[left_mask])
         right_entropy = entropy(y[right_mask])
-        weighted_entropy = (np.sum(left_mask) / len(y)) * left_entropy + (np.sum(right_mask) / len(y)) * right_entropy
+        weighted_entropy = (np.sum(left_mask) / len(y)) * left_entropy + (
+            np.sum(right_mask) / len(y)
+        ) * right_entropy
     else:
         values, counts = np.unique(X[:, feature], return_counts=True)
-        weighted_entropy = np.sum((counts[i] / np.sum(counts)) * entropy(y[X[:, feature] == values[i]]) for i in range(len(values)))
+        weighted_entropy = np.sum(
+            (counts[i] / np.sum(counts)) * entropy(y[X[:, feature] == values[i]])
+            for i in range(len(values))
+        )
     return total_entropy - weighted_entropy
 
 
