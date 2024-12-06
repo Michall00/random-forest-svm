@@ -23,7 +23,8 @@ class DataProcessor(ABC):
         self.svm_df.to_csv(self.processed_data_dir / "SVM.csv", index=False)
 
     @abstractmethod
-    def apply_standardization(self) -> None: ...
+    def apply_standardization(self) -> None:
+        ...
 
 
 class IrisDataProcessor(DataProcessor):

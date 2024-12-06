@@ -1,6 +1,6 @@
 import numpy as np
 from sklearn.svm import SVC
-from random_forest_svm.id3_tree.id3_tree import  ID3
+from random_forest_svm.id3_tree.id3_tree import ID3
 from scipy.stats import mode
 
 
