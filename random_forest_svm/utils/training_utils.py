@@ -9,20 +9,17 @@ from sklearn.metrics import (
     confusion_matrix,
 )
 from random_forest_svm.hybrid_random_forest import HybridRandomForest
-from typing import Dict, Union
+from typing import Dict, Union, Type, Optional
 
 
 def evaluate_classifier(
-    X_svm: np.ndarray,
-    y_svm: np.ndarray,
+    classifier_class: Type,
+    n_splits: int,
+    classifier_params: dict,
     X_id3: np.ndarray,
     y_id3: np.ndarray,
-    n_splits: int,
-    n_classifiers: int,
-    svm_params: dict,
-    id3_params: dict,
-    proportion_svm: float,
-    subsample: float,
+    X_svm: Optional[np.ndarray] = None,
+    y_svm: Optional[np.ndarray] = None,
 ) -> Dict[str, Union[float, np.ndarray]]:
 
     skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
@@ -37,16 +34,16 @@ def evaluate_classifier(
     y_true_all = []
     y_pred_all = []
 
-    for train_idx, test_idx in skf.split(X_svm, y_svm):
-        cls = HybridRandomForest(
-            n_classifiers=n_classifiers,
-            svm_params=svm_params,
-            id3_params=id3_params,
-            proportion_svm=proportion_svm,
-            subsample=subsample,
-        )
-        cls.fit(X_svm[train_idx], y_svm[train_idx], X_id3[train_idx], y_id3[train_idx])
-        y_pred = cls.predict(X_svm[test_idx], X_id3[test_idx])
+    for train_idx, test_idx in skf.split(X_id3, y_id3):
+        if classifier_class == HybridRandomForest:
+            cls = classifier_class(**classifier_params)
+            cls.fit(X_svm[train_idx], y_svm[train_idx], X_id3[train_idx], y_id3[train_idx])
+            y_pred = cls.predict(X_svm[test_idx], X_id3[test_idx])
+        else:
+            cls = classifier_class(**classifier_params)
+            cls.fit(X_id3[train_idx], y_id3[train_idx])
+            y_pred = cls.predict(X_id3[test_idx])
+
         y_true = y_svm[test_idx]
         y_true_all.extend(y_true)
         y_pred_all.extend(y_pred)
