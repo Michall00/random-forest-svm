@@ -37,11 +37,18 @@ def mlflow_logger(func):
         experiment_name = kwargs.get("experiment_name", "default")
         dataset_name = kwargs.get("dataset_name", "unknown")
         classifier_class = kwargs.get("classifier_class", None)
+        classifier_params = kwargs.get("classifier_params", None)
 
         mlflow.set_experiment(experiment_name)
         with mlflow.start_run():
             mlflow.log_param("dataset_name", dataset_name)
             mlflow.log_param("classifier_class", classifier_class.__name__)
+            if classifier_class == HybridRandomForest:
+                mlflow.log_params(classifier_params["svm_params"])
+                mlflow.log_params(classifier_params["id3_params"])
+                mlflow.log_param("SVM proportion", classifier_params["proportion_svm"])
+                mlflow.log_param("Subsample", classifier_params["subsample"])
+                mlflow.log_param("Number of classifiers", classifier_params["n_classifiers"])
             results = func(*args, **kwargs)
             for key, value in results.items():
                 if key == "confusion_matrix":
