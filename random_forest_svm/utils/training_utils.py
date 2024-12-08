@@ -1,5 +1,5 @@
 import numpy as np
-from sklearn.model_selection import cross_val_predict, StratifiedKFold
+from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import (
     make_scorer,
     accuracy_score,
@@ -10,8 +10,51 @@ from sklearn.metrics import (
 )
 from random_forest_svm.hybrid_random_forest import HybridRandomForest
 from typing import Dict, Union, Type, Optional
+from functools import wraps
+import mlflow
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 
+def create_cf_heatmap(confusion_matrix: np.ndarray) -> None:
+    plt.figure(figsize=(10, 7))
+    sns.heatmap(confusion_matrix, annot=True, fmt='d', cmap='Blues')
+    plt.title('Confusion Matrix')
+    plt.xlabel('Predicted')
+    plt.ylabel('True')
+    heatmap_path = "reports/figures/confusion_matrix.png"
+    plt.savefig(heatmap_path)
+    plt.close()
+
+
+def mlflow_logger(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs) -> Dict[str, Union[float, np.ndarray]]:
+        enable_mlflow = kwargs.get("enable_mlflow", False)
+        if not enable_mlflow:
+            return func(*args, **kwargs)
+        
+        experiment_name = kwargs.get("experiment_name", "default")
+        dataset_name = kwargs.get("dataset_name", "unknown")
+        classifier_class = kwargs.get("classifier_class", None)
+        
+        mlflow.set_experiment(experiment_name)
+        with mlflow.start_run():
+            mlflow.log_param("dataset_name", dataset_name)
+            mlflow.log_param("classifier_class", classifier_class.__name__)
+            results = func(*args, **kwargs)
+            for key, value in results.items():
+                if key == "confusion_matrix":
+                    create_cf_heatmap(value)
+                    mlflow.log_artifact("reports/figures/confusion_matrix.png")
+                else:
+                    mlflow.log_metric(key, value)
+            return results
+
+    return wrapper
+
+
+@mlflow_logger
 def evaluate_classifier(
     classifier_class: Type,
     n_splits: int,
@@ -20,6 +63,9 @@ def evaluate_classifier(
     y_id3: np.ndarray,
     X_svm: Optional[np.ndarray] = None,
     y_svm: Optional[np.ndarray] = None,
+    enable_mlflow: bool = False,
+    experiment_name: str = "default",
+    dataset_name: str = "unknown",
 ) -> Dict[str, Union[float, np.ndarray]]:
 
     skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
