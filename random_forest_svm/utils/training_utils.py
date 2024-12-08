@@ -18,10 +18,10 @@ import matplotlib.pyplot as plt
 
 def create_cf_heatmap(confusion_matrix: np.ndarray) -> None:
     plt.figure(figsize=(10, 7))
-    sns.heatmap(confusion_matrix, annot=True, fmt='d', cmap='Blues')
-    plt.title('Confusion Matrix')
-    plt.xlabel('Predicted')
-    plt.ylabel('True')
+    sns.heatmap(confusion_matrix, annot=True, fmt="d", cmap="Blues")
+    plt.title("Confusion Matrix")
+    plt.xlabel("Predicted")
+    plt.ylabel("True")
     heatmap_path = "reports/figures/confusion_matrix.png"
     plt.savefig(heatmap_path)
     plt.close()
@@ -33,11 +33,11 @@ def mlflow_logger(func):
         enable_mlflow = kwargs.get("enable_mlflow", False)
         if not enable_mlflow:
             return func(*args, **kwargs)
-        
+
         experiment_name = kwargs.get("experiment_name", "default")
         dataset_name = kwargs.get("dataset_name", "unknown")
         classifier_class = kwargs.get("classifier_class", None)
-        
+
         mlflow.set_experiment(experiment_name)
         with mlflow.start_run():
             mlflow.log_param("dataset_name", dataset_name)
