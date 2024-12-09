@@ -14,6 +14,18 @@ from functools import wraps
 import mlflow
 import seaborn as sns
 import matplotlib.pyplot as plt
+from random_forest_svm.data.load_data import load_iris, load_wine_quality, load_churn
+
+
+def load_dataset(dataset_name: str):
+    if dataset_name == "Iris":
+        return load_iris()
+    elif dataset_name == "Wine Quality":
+        return load_wine_quality()
+    elif dataset_name == "Churn":
+        return load_churn()
+    else:
+        raise ValueError(f"Unknown dataset: {dataset_name}")
 
 
 def create_cf_heatmap(confusion_matrix: np.ndarray) -> None:
