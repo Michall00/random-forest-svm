@@ -18,6 +18,7 @@ def objective(trial: Trial,
     min_samples_leaf = trial.suggest_int("min_samples_leaf", 1, 20)
     n_classifiers = trial.suggest_int("n_classifiers", 10, 200)
     proportion_svm = trial.suggest_float("proportion_svm", 0, 1)
+    subsample = trial.suggest_float("subsample", 0, 1)
 
     max_depth = None if max_depth == 0 else max_depth
     kernel = "rbf"
@@ -39,6 +40,7 @@ def objective(trial: Trial,
         "svm_params": svm_params,
         "id3_params": id3_params,
         "proportion_svm": proportion_svm,
+        "subsample": subsample
     }
 
     results = evaluate_classifier(
@@ -49,7 +51,7 @@ def objective(trial: Trial,
         y_svm=y_svm,
         X_id3=X_id3,
         y_id3=y_id3,
-        enable_mlflow=False,
+        enable_mlflow=True,
         experiment_name="Hyperparameters Experiment",
         dataset_name=dataset_name,
     )
@@ -58,12 +60,13 @@ def objective(trial: Trial,
 
 
 def main():
-    partial_objective = partial(objective, dataset_name="Iris", n_splits=5, metric="f1")
+    partial_objective = partial(objective, dataset_name="WineQuality", n_splits=5, metric="f1")
     study = optuna.create_study(
+        study_name="hyperparameters_experiment_wine_quality",
         direction="maximize",
         load_if_exists=True,
         storage="sqlite:///hyperparameters.db",)
-    study.optimize(partial_objective, n_trials=100)
+    study.optimize(partial_objective, n_trials=1)
 
 
 if __name__ == "__main__":

@@ -20,7 +20,7 @@ from random_forest_svm.data.load_data import load_iris, load_wine_quality, load_
 def load_dataset(dataset_name: str):
     if dataset_name == "Iris":
         return load_iris()
-    elif dataset_name == "Wine Quality":
+    elif dataset_name == "WineQuality":
         return load_wine_quality()
     elif dataset_name == "Churn":
         return load_churn()
