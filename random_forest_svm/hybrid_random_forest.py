@@ -3,6 +3,12 @@ from sklearn.svm import SVC
 from random_forest_svm.id3_tree.id3_tree import ID3
 from scipy.stats import mode
 
+class MockSVC:
+    def fit(self, X: np.ndarray, y: np.ndarray) -> None:
+        self.cl = np.unique(y)[0]
+
+    def predict(self, X: np.ndarray) -> np.ndarray:
+        return np.full((X.shape[0],), self.cl, dtype=int)
 
 class HybridRandomForest:
     def __init__(
@@ -40,11 +46,14 @@ class HybridRandomForest:
                 else (X_id3[sample_idxs, :], y_id3[sample_idxs])
             )
 
-            cls = (
-                SVC(**self.svm_params, probability=True)
-                if cls_idx < n_svm
-                else ID3(**self.id3_params)
-            )
+            if cls_idx < n_svm:
+                if len(np.unique(y)) == 1:
+                    cls = MockSVC()
+                else:
+                    cls = SVC(**self.svm_params)
+            else:
+                cls = ID3(**self.id3_params)
+
             cls.fit(X, y)
             self.classifiers.append(cls)
 
