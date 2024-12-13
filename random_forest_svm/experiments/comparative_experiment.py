@@ -1,5 +1,6 @@
 from random_forest_svm.hybrid_random_forest import HybridRandomForest
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import SVC
 from random_forest_svm.data.load_data import load_iris, load_wine_quality, load_churn
 from random_forest_svm.utils.training_utils import evaluate_classifier
 from itertools import product
@@ -13,7 +14,7 @@ def main():
         "proportion_svm": 0.5,
         "subsample": 0.5,
     }
-    models = [HybridRandomForest, RandomForestClassifier]
+    models = [SVC]
     datasets = [load_iris, load_wine_quality, load_churn]
 
     experiments = list(product(models, datasets))

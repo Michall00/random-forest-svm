@@ -9,6 +9,7 @@ from sklearn.metrics import (
     confusion_matrix,
 )
 from random_forest_svm.hybrid_random_forest import HybridRandomForest
+from sklearn.svm import SVC
 from typing import Dict, Union, Type, Optional
 from functools import wraps
 import mlflow
@@ -104,6 +105,10 @@ def evaluate_classifier(
             cls = classifier_class(**classifier_params)
             cls.fit(X_svm[train_idx], y_svm[train_idx], X_id3[train_idx], y_id3[train_idx])
             y_pred = cls.predict(X_svm[test_idx], X_id3[test_idx])
+        elif classifier_class == SVC:
+            cls = classifier_class(**classifier_params)
+            cls.fit(X_svm[train_idx], y_svm[train_idx])
+            y_pred = cls.predict(X_svm[test_idx])
         else:
             cls = classifier_class(**classifier_params)
             cls.fit(X_id3[train_idx], y_id3[train_idx])
