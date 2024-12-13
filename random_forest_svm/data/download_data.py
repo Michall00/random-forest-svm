@@ -1,3 +1,5 @@
+# AUTHOR: Mateusz Ostaszewski
+
 from ucimlrepo import fetch_ucirepo
 
 from random_forest_svm.data.config import (

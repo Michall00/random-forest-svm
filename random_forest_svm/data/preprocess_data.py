@@ -1,3 +1,4 @@
+# AUTHOR: Mateusz Ostaszewski
 from pathlib import Path
 
 from random_forest_svm.data.config import (

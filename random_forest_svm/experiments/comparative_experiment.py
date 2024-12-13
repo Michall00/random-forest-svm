@@ -1,3 +1,4 @@
+# AUTHOR: Mateusz Ostaszewski
 from random_forest_svm.hybrid_random_forest import HybridRandomForest
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC

@@ -1,3 +1,4 @@
+# AUTHOR: Mateusz Ostaszewski
 IRIS_ID = 53
 WINE_QUALITY_ID = 186
 CHURN_ID = 563

@@ -1,3 +1,4 @@
+# AUTHOR: Mateusz Ostaszewski
 from random_forest_svm.data.load_data import load_iris, load_wine_quality
 from random_forest_svm.utils.training_utils import evaluate_classifier
 from random_forest_svm.hybrid_random_forest import HybridRandomForest

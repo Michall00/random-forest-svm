@@ -1,3 +1,4 @@
+# AUTHOR: Mateusz Ostaszewski
 import numpy as np
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import (
