@@ -79,7 +79,7 @@ H(D) - entropia zbioru danych D obliczana jako
 
 ### 2. [Wine Quality](https://archive.ics.uci.edu/dataset/186/wine+quality)
 - Liczba przykładów: 4898 (wino białe), 1599 (wino czerwone)
-- Liczba klas: od 0 do 10 – oceny jakości wina
+- Liczba klas: od 0 do 10 – oceny jakości wina (przyjmujemy od 0 do 5 za wina słabe, a powyżej za wina dobre)
 - Liczba cech: 11 (chemiczne właściwości)
 
 ### 3. [Telecom Churn](https://archive.ics.uci.edu/dataset/563/iranian+churn+dataset)
