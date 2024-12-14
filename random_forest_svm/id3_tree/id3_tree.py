@@ -1,3 +1,4 @@
+# AUTHOR: Michał Sadowski
 import numpy as np
 from typing import Any, Union, Optional
 from random_forest_svm.utils.id3_utils import find_best_split, information_gain

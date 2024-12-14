@@ -1,3 +1,4 @@
+# AUTHOR: Michał Sadowski
 import optuna
 from optuna.trial import Trial
 from random_forest_svm.utils.training_utils import evaluate_classifier, load_dataset

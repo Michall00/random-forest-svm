@@ -1,3 +1,4 @@
+# AUTHOR: Michał Sadowski
 import numpy as np
 
 
