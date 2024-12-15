@@ -36,36 +36,36 @@ Wynik końcowy jest określany na podstawie głosowania większościowego.
     Macierz pomyłek
     </div>
 
-# Eksperymenty
 
-## Zbiory danych
-### 1. [Iris](https://archive.ics.uci.edu/dataset/53/iris)
+# Zbiory danych
+## 1. [Iris](https://archive.ics.uci.edu/dataset/53/iris)
 - Liczba przykładów: 150
 - Liczba klas: 3 - sprowadzone do 2(dla SVM)
 - Liczba cech: 4 (długość/szerokość kielicha i płatka)
 
-### 2. [Wine Quality](https://archive.ics.uci.edu/dataset/186/wine+quality)
+## 2. [Wine Quality](https://archive.ics.uci.edu/dataset/186/wine+quality)
 - Liczba przykładów: 4898 (wino białe), 1599 (wino czerwone)
 - Liczba klas: od 0 do 10 – oceny jakości wina (przyjmujemy od 0 do 5 za wina słabe, a powyżej za wina dobre)
 - Liczba cech: 11 (chemiczne właściwości)
 
-### 3. [Telecom Churn](https://archive.ics.uci.edu/dataset/563/iranian+churn+dataset)
+## 3. [Telecom Churn](https://archive.ics.uci.edu/dataset/563/iranian+churn+dataset)
 - Liczba przykładów: 3150
 - Liczba klas: 2 (churn lub nie churn)
 - Liczba cech: 21 (informacje o klientach, użycie usług).
 
-OPISAĆ CO ZOSTAŁO ZMIENIONE !!!!!!!!!!!!!
+# Zmiany względem dokumentacji wstepnej
+Podjęliśmy decyzję o sprowadzeniu klasyfikacji wieloklasowej w zbiorach Iris oraz Wine Quality do klasyfikacji binarnej. W przypadku zbioru Iris uznaliśmy klasę Iris-setosa za 1, a pozostałe klasy za 0. W zbiorze Wine Quality uznaliśmy wina o ocenie 1-5 za wina słabe (klasa 0), a wina o ocenie 6-10 za wina dobre (klasa 1). Decyzje te były motywowane binarnymi właściwościami klasyfikatora SVM. Rozważaliśmy opcję pozostania przy pierwotnym rozkładzie klas, ale spowodowałoby to konieczność budowania drzew SVM (1 vs reszta), co uznaliśmy za niezgodne z poleceniem.
 
-**Walidacja modeli zostanie przeprowadzona za pomocą walidacji krzyżowej z podziałem na 5 podzbiorów.**
+Dodatkowo, po konsultacjach, użyliśmy biblioteki Optuna do optymalizacji hiperparametrów naszego klasyfikatora.
 
+# Eksperymenty numeryczne
+**Walidacja modeli została przeprowadzona za pomocą walidacji krzyżowej z podziałem na 5 podzbiorów.**
 
-## Eksperymenty numeryczne
-
-### Wpływ parametrów modelu na skuteczność
+## Wpływ parametrów modelu na skuteczność
 
 TODO
 
-### Skuteczność hybrydowego modelu
+## Skuteczność hybrydowego modelu
 
 Przeprowadziliśmy eksperyment, w którym porównaliśmy nasz hybrydowy las (nazywany dalej HybridRandomForest) z bazowym lasem losowym oraz modelem SVM z biblioteki scikit-learn (RandomForest). Modele z scikit-learn zostały stworzone z domyślnymi parametrami, natomiast nasz hybrydowy las został stworzony z hiperparametrami wyznaczonymi w poprzednim eksperymencie. Warto zaznaczyć, że trenowaliśmy oraz walidowaliśmy modele przy użyciu walidacji krzyżowej o stopniu 5, co oznacza, że wyniki są uśrednione.
 
@@ -103,8 +103,13 @@ Wykres przedstawia wyniki dla czterech metryk dla trzech modeli.
 **Macierze pomyłek**
 
 ![HybridRandomForest](copar_exp_src/confusion_matrix.png)
-![RandomForestClassifier](<copar_exp_src/confusion_matrix (1)-1.png>)
-![SVM](<copar_exp_src/confusion_matrix (2).png>)
+**HybridRandomForest** 
+
+![RandomForestClassifier](<copar_exp_src/confusion_matrix (1)-1.png>) 
+**RandomForestClassifier**
+
+![SVM](<copar_exp_src/confusion_matrix (2).png>) 
+**SVC**
 
 Wizualizacja macierzy pomyłek potwierdza wcześniejsze wnioski. Liderem pozostaje HybridRandomForest, który popełnia bardzo mało błędów.
 
@@ -147,8 +152,14 @@ W kontekście analizy churn (utrata klientów), **Czułość** jest szczególnie
 **Macierze pomyłek**
 
 ![HybridRandomForest](<copar_exp_src/confusion_matrix (4).png>)
+**HybridRandomForest** 
+
 ![RandomForestClassifier](<copar_exp_src/confusion_matrix (3).png>)
+**RandomForestClassifier**
+
 ![SVM](<copar_exp_src/confusion_matrix (7).png>)
+**SVC**
+
 
 Wizualizacja macierzy pomyłek potwierdza wcześniejsze wnioski. Bazowy RandomForestClassifier zdecydowanie lepiej radzi sobie z klasą, której jest mniej.
 
