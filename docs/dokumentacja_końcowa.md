@@ -291,8 +291,15 @@ Wyniki Eksperymentów:
 Przeprowadziliśmy eksperyment, w którym porównaliśmy nasz hybrydowy las (nazywany dalej HybridRandomForest) z bazowym lasem losowym oraz modelem SVM z biblioteki scikit-learn (RandomForest). Modele z scikit-learn zostały stworzone z domyślnymi parametrami, natomiast nasz hybrydowy las został stworzony z hiperparametrami wyznaczonymi w poprzednim eksperymencie. Warto zaznaczyć, że trenowaliśmy oraz walidowaliśmy modele przy użyciu walidacji krzyżowej o stopniu 5, co oznacza, że wyniki są uśrednione.
 
 ### Wyniki dla Telecom Churn
+Poniższa table przedstawia wyniki modeli na zbiorze Telecom Churn
 
-![Telecom Churn](copar_exp_src/image-4.png)
+| Model              | Czas    | Dokładność | F1   | Precyzja | Czułość |
+|---------------------|---------|------------|------|----------|---------|
+| HybridRandomForest | 2,1 min | 0,96       | 0,88 | 0,89     | 0,88    |
+| RandomForest       | 1,6 s   | 0,96       | 0,85 | 0,89     | 0,82    |
+| SVC                | 0,9 s   | 0,90       | 0,63 | 0,80     | 0,52    |
+
+
 
 **Porównanie metryk F1, Precyzja, Czułość i Dokładność**
     
@@ -340,12 +347,17 @@ W kontekście analizy churn (utrata klientów), **Czułość** jest szczególnie
 
 ### Wyniki dla Wine Quality
 
-![Wine Quality](copar_exp_src/image.png)
+Poniższa table przedstawia wyniki modeli na zbiorze Wine Quality.
+| Model              | Czas     | Dokładność | F1   | Precyzja | Czułość |
+|---------------------|----------|------------|------|----------|---------|
+| HybridRandomForest | 13,3 min | 0,80       | 0,85 | 0,81     | 0,90    |
+| RandomForest       | 4,3 s    | 0,84       | 0,87 | 0,86     | 0,89    |
+| SVC                | 4,0 s    | 0,76       | 0,82 | 0,78     | 0,87    |
+
 
 **Porównanie metryk F1, Precyzja, Czułość i Dokładność**
 
 ![Wykres przedstawia wyniki dla czterech metryk dla trzech modeli.](copar_exp_src/image-1.png)
-
 
 
 **Obserwacje**
@@ -391,7 +403,11 @@ RandomForestClassifier okazał się liderem na zbiorze Wine Quality. HybridRando
 
 ### Wyniki dla Iris   
 
-![Iris](copar_exp_src/image.png)
+| Model              | Czas    | Dokładność | F1   | Precyzja | Czułość |
+|---------------------|---------|------------|------|----------|---------|
+| HybridRandomForest | 1,7 s   | 1,00       | 1,00 | 1,00     | 1,00    |
+| RandomForest       | 0,8 s   | 1,00       | 1,00 | 1,00     | 1,00    |
+| SVC                | 0,6 s   | 1,00       | 1,00 | 1,00     | 1,00    |
 
 Wszystkie modele uzyskały perfekcyjne wyniki na tym zbiorze danych. Zbiór ten okazał się "zbyt prosty" dla wszystkich porównywanych modeli.
 
@@ -399,5 +415,7 @@ Wszystkie modele uzyskały perfekcyjne wyniki na tym zbiorze danych. Zbiór ten 
 
 Podsumowując, HybridRandomForest okazał się najbardziej efektywnym modelem w analizie churn, natomiast RandomForestClassifier był liderem na zbiorze Wine Quality. SVM nie sprawdził się dobrze w żadnym z zadań. Istotną uwagą jest to że nasz autorski HybridRandomForest jest wielokrotnie wolnijeszy od modeli z scikit-learn.
 
-# Wnioski 
-TODO
+# Wnioski z projektu
+Las losowy z SVM jest zdecydowanie lepszy od pojedyńczego SVM. W porownaniu z standardowym lasem losowym wypada porownywalnie, ma lesze wyniki na czułości. Zdecydowanym minusem naszego modelu jest jego czas uczenia oraz inferencji, ktory jest wielokrotnie większy.
+
+TODO Opisać ktory parametr najwżniejszy i jak ilośc SVM wpływa na wynik
