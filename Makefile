@@ -43,6 +43,13 @@ prepare_data:
 	uv run python random_forest_svm/data/preprocess_data.py
 
 
+## Perform experiments 
+.PHONY: run_experiments
+run_experiments:
+	uv run python random_forest_svm/experiments/comparative_experiment.py
+	uv run python random_forest_svm/experiments/perform_hyperparameters_experiment.py
+
+
 #################################################################################
 # PROJECT RULES                                                                 #
 #################################################################################
