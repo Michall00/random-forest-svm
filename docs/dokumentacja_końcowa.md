@@ -62,10 +62,34 @@ Dodatkowo, po konsultacjach, użyliśmy biblioteki Optuna do optymalizacji hiper
 
 **Walidacja modeli została przeprowadzona za pomocą walidacji krzyżowej z podziałem na 5 podzbiorów.**
 
+### Analiza proporcji SVM w lesie losowym
+
+Przeprowadziliśmy eksperyment w którym testujemy różne proporcje SVM w lesie aby sprawdzić w jaki sposób wpływa ona na skuteczność tego modelu.
+
+#### Wyniki dla zbioru Wine Quality
+
+  Poniższy wykres przedstawia wpływ hiperparametru określającego proporcję SVM w lesie na miarę F1 w wynikach modeli na zbiorze Wine Quality
+
+![Wpływ proporcji SVM w lesie losowym na miarę F1 dla zbioru Wine Quality](../reports/compare_svm_prop_wine.png)
+
+#### Wyniki dla zbioru Telecom Churn
+
+  Poniższy wykres przedstawia wpływ hiperparametru określającego proporcję SVM w lesie na miarę F1 w wynikach modeli na zbiorze Telecom Churnty
+
+![Wpływ proporcji SVM w lesie losowym na miarę F1 dla zbioru Churn](../reports/compare_svm_prop_wine.png)
+
+#### Wnioski z eksperymentu
+
+1. Wpływ proporcji SVM na jakość modelu: 
+  - W obu przypadkach (Wine Quality i Churn) obserwujemy, że większy udział SVM w modelu prowadzi do spadku jakości modelu. Miara F1 osiąga wyższe wartości przy niższych proporcjach SVM.
+
+2. Hipoteza przyczyn spadku jakości:
+  - SVM jest algorytmem bardziej wymagającym pod względem dostrajania hiperparametrów w porównaniu do drzew decyzyjnych. Domyślne hiperparametry użyte w tym eksperymencie (oferowane przez bibliotekę scikit-learn) mogą nie być odpowiednie dla danych na których przeprowadzamy eksperyment, co skutkuje gorszymi wynikami lasów z większą ilością SVM niż tych z większą ilością drzew. W kolejnych eksperymentach przetestujemy wpływ wszystkich hiperparametrów na jakość modelu co pozwoli nam dokładniej zbadać wpływ hiperparametrów w tym proporcji SVM na jakość modelu. 
+
 
 ### Wpływ parametrów modelu na skuteczność
 
-Przeprowadziliśmy 4 eksperymenty dla różnych zbiorów danych. Zdecydowaliśmy się na przeprowadzenie tych eksperymentów przy pomocy Optuny, aby w efektywny sposób znaleźć optymalny zbiór hiperparametrów.
+Przeprowadziliśmy 4 eksperymenty dla różnych zbiorów danych. Zdecydowaliśmy się na przeprowadzenie tych eksperymentów przy pomocy Optuny, aby w efektywny sposób znaleźć optymalny zbiór hiperparametrów. Eksperymenty są podzielone na te przeprowadzone na pojedyńczych zbiorach, gdzie za każdym razem wyznaczaliśmy nowe hiperparametry oraz eksperyment w którym jeden zestaw hiperparametrów był testowany dla wszystkich zbiorów w celu wyznaczenia najbardziej ogólnego zestawu hiperparametrów.
 
 #### Eksperymenty wyznaczające wartości hiperparametrów
 - Na zbiorze Iris
@@ -98,11 +122,11 @@ Przeprowadziliśmy 4 eksperymenty dla różnych zbiorów danych. Zdecydowaliśmy
 Możemy zauważyć, że we wszystkich zbiorach oprócz Iris dominowały hiperparametry związane z SVM. 
 Ze zbiorem Iris, jako że jest mały oraz niezbyt skomplikowany dobrze radzi sobie większość klasyfikatorów nawet tych prostych.
 Watro też zauważyć, że we wszystkich zbiorach proporcja svm:id3 była na korzyść SVM co także może tłumaczyć, dlaczego hiperparametry dotyczące SVM (C oraz gamma) były ważniejsze. 
-We wszy kich zbiorach istotnym hiperparametrem był subsample co może nam mówić, że dla modeli ważne było selekcjonowanie danych, co przeciwdziałało w przeuczaniu się naszego klasyfikatora.
+We wszystkich zbiorach istotnym hiperparametrem był subsample co może nam mówić, że dla modeli ważne było selekcjonowanie danych, co przeciwdziałało w przeuczaniu się naszego klasyfikatora.
 
 #### Analiza zależności między parametrami
 
-![Parallel Coordinate Plot](../reports/all.png)
+![wykres współrzędnych równoległych hiperparametrów](../reports/all.png)
 
 #### Analiza wpływu hiperparametrów na wynik funkcji celu (Parallel Coordinate Plot)
 
@@ -112,8 +136,8 @@ We wszy kich zbiorach istotnym hiperparametrem był subsample co może nam mówi
   - Małe wartości `C` (<1) prowadzą do gorszych wyników.
 
 - **`gamma` (parametr jądra RBF w SVM)**:
-  - Optymalny zakres: **0,001–0,01**.
-  - Ekstremalne wartości `gamma` (bardzo małe <0,0001 lub bardzo duże >0,1) pogarszają wyniki.
+  - Optymalny zakres: **0,05–1**.
+  - Ekstremalne wartości `gamma` (bardzo małe <0,001 lub bardzo duże >1) pogarszają wyniki.
 
 - **`proportion_svm` (udział SVM w hybrydzie)**:
   - Wyższe wartości `proportion_svm` (>0,5) dominują w najlepszych wynikach.
@@ -127,14 +151,14 @@ We wszy kich zbiorach istotnym hiperparametrem był subsample co może nam mówi
 
 #### **2. Najważniejsze zależności między hiperparametrami**
 - **`C` i `gamma`**:
-  - Kombinacja **`C`** w zakresie **10–100** i **`gamma`** w zakresie **0,001–0,01** prowadzi do najlepszych wyników.
+  - Kombinacja **`C`** w zakresie **10–100** i **`gamma`** w zakresie **0,05–1** prowadzi do najlepszych wyników.
 
 ---
 
 #### **3. Podsumowanie wniosków**
 - **Kluczowe hiperparametry**:
   - `C`: **10–100**
-  - `gamma`: **0,001–0,01**
+  - `gamma`: **0,05–1**
   - `proportion_svm`: **>0,5**
   - `subsample`: około **1.0**
 
@@ -152,10 +176,12 @@ We wszy kich zbiorach istotnym hiperparametrem był subsample co może nam mówi
 
 ##### **1. `C` i `gamma`**
 
-![`C` i `gamma`](../reports/c_gamma.png)
+Poniższy wykres przedstawia relację między hiperparametrami `C` oraz `gamma`, oraz ich wpływ na wyniki modelu. 
+
+![Relacja `C` i `gamma`](../reports/c_gamma.png)
 
 - **Obszar najlepszych wyników**:
-  - Najlepsze wartości funkcji celu koncentrują się dla średnich i dużych wartości `C` (10–100) oraz małych wartości `gamma` (0,001–0,01).
+  - Najlepsze wartości funkcji celu koncentrują się dla średnich i dużych wartości `C` (10–100) oraz małych wartości `gamma` (0,05–1).
   - Kombinacja dużej regularyzacji `C` i umiarkowanego wygładzenia jądra RBF daje stabilne, wysokie wyniki.
 - **Obszar słabych wyników**:
   - Bardzo małe wartości `C` (< 1) oraz ekstremalne wartości `gamma` (bardzo małe < 0,0001 lub duże > 1) prowadzą do gorszych wyników.
@@ -168,7 +194,9 @@ We wszy kich zbiorach istotnym hiperparametrem był subsample co może nam mówi
 
 ##### **2. `n_classifiers` i `proportion_svm`**
 
-![`n_classifiers` i `proportion_svm`](../reports/n_class_prop_svm.png)
+Poniższy wykres przedstawia relację między hiperparametrami `n_classifiers` oraz `proportion_svm`, oraz ich wpływ na wyniki modelu. 
+
+![Relacja `n_classifiers` i `proportion_svm`](../reports/n_class_prop_svm.png)
 
 - **Obszar najlepszych wyników**:
   - Najlepsze wyniki (czerwone punkty) są uzyskiwane dla:
@@ -184,7 +212,9 @@ We wszy kich zbiorach istotnym hiperparametrem był subsample co może nam mówi
 
 ##### **3. `n_classifiers` i `subsample`**
 
-![`n_classifiers` i `subsample`](../reports/sub_n_class.png)
+Poniższy wykres przedstawia relację między hiperparametrami `n_classifiers` oraz `subsample`, oraz ich wpływ na wyniki modelu. 
+
+![Relacja `n_classifiers` i `subsample`](../reports/sub_n_class.png)
 
 - **Obszar najlepszych wyników**:
   - Najlepsze wyniki występują przy:
@@ -199,7 +229,9 @@ We wszy kich zbiorach istotnym hiperparametrem był subsample co może nam mówi
 
 ##### **4. `C` i `proportion_svm`**
 
-![`C` i `proportion_svm`](../reports/c_prop_svm.png)
+Poniższy wykres przedstawia relację między hiperparametrami `C` oraz `proportion_svm`, oraz ich wpływ na wyniki modelu.
+
+![Relacja `C` i `proportion_svm`](../reports/c_prop_svm.png)
 
 - **Obszar najlepszych wyników**:
   - Optymalne wyniki pojawiają się dla:
@@ -213,49 +245,52 @@ We wszy kich zbiorach istotnym hiperparametrem był subsample co może nam mówi
 ---
 
 #### Najlepsze wyniki:
-- Iris: 1
-- Churn: 0,89
-- Wine: 0,85
-- Wszystkie: 0,91
 
-Wyniki Eksperymentów:
+Poniższa tabela przedstawia metryki uzyskane poprzez najlepsze modele dla eksperymentu dla osobno dobieranych hiperparametrów dla każdego zbioru danych:
 
-![Różne hiperparametry](../reports/3_inne_compare.png)
+| Zbiór danych | F1 | Dokładność | Czułość | Precyzja | 
+| ------------ | -- | ---------- | ------- | -------- |  
+| Iris         | 1  |       1    |    1    |      1   |
+| Churn        |0,89|     0,97   |   0,89  |     0,9  |
+| Wine         |0,85|     0,8    |  0,9    |   0,81   |
 
-![Parametry i metryki dla różnych hiperparametrów](../reports/parametr_metryki_inne.png)
+Poniższa tabela przedstawia metryki uzyskane poprzez najlepsze modele dla eksperymentu dla jednokowo dobieranych hiperparametrów dla każdego zbioru danych:
 
-![Takie same hiperparamtery](../reports/3_rozne_compare.png)
+| Zbiór danych | F1 | Dokładność | Czułość | Precyzja | 
+| ------------ | -- | ---------- | ------- | -------- |  
+| Iris         | 1  |       1    |    1    |      1   |
+| Churn        |0,89|     0,97   |   0,88  |     0,9  |
+| Wine         |0,84|     0,8    |  0,86   |   0,83   |
 
-![Parametry i metryki dla tych samych hiperparametrów](../reports/paramery_metryki_te_same.png)
 
 ##### Macierze Pomyłek
 
 - Iris
 
-![Iris różne hiperparametry](../reports/macierze_pomylek/inne_iris.png)
+![Iris z hiperparametrami dobranymi konkretnie dla tego zbioru](../reports/macierze_pomylek/inne_iris.png)
 
 - Churn
 
-![Churn różne hiperparametry](../reports/macierze_pomylek/inne_churn.png)
+![Churn z hiperparametrami dobranymi konkretnie dla tego zbioru](../reports/macierze_pomylek/inne_churn.png)
 
 - Wine
 
-![Wine różne hiperparametry](../reports/macierze_pomylek/inne_wine.png)
+![Wine z hiperparametrami dobranymi konkretnie dla tego zbioru](../reports/macierze_pomylek/inne_wine.png)
 
 ---
 
 - Iris
 
-![Iris jednakowe hiperparametry](../reports/macierze_pomylek/te_same_iris.png)
+![Iris z jednakowymi hiperparametrami dobranymi dla wszystkich zbiorów](../reports/macierze_pomylek/te_same_iris.png)
 
 
 - Churn
 
-![Churn jednakowe hiperparametry](../reports/macierze_pomylek/te_same_churn.png)
+![Churn z jednakowymi hiperparametrami dobranymi dla wszystkich zbiorów](../reports/macierze_pomylek/te_same_churn.png)
 
 - Wine
 
-![Wine jednakowe hiperparametry](../reports/macierze_pomylek/te_same_wine.png)
+![Wine z jednakowymi hiperparametrami dobranymi dla wszystkich zbiorów](../reports/macierze_pomylek/te_same_wine.png)
 
 ---
 
@@ -280,6 +315,7 @@ Wyniki Eksperymentów:
   - Warto dostosowywać parametry indywidualnie dla tego zbioru.
 
 - **Optymalizacja SVM proportion**:
+  - W tym eksperymentcie możemy zauważyć, że w przeciwieństiwe do 1 eksperymentu w którym był badany wpływ % SVM, większa proporcja SVM wpływa pozytywnie na jakość modelu. Jest to prawdopodobnie spowodowane lepszym doborem hiperparametrów dotyczących SVM takich jak (C oraz gamma).
   - Zbiory bardziej złożone (jak **Churn**) wymagają większego udziału SVM.
   - Zbiory prostsze (jak **Iris**) mogą działać dobrze z mniejszym udziałem SVM.
 
@@ -418,4 +454,6 @@ Podsumowując, HybridRandomForest okazał się najbardziej efektywnym modelem w 
 # Wnioski z projektu
 Las losowy z SVM jest zdecydowanie lepszy od pojedyńczego SVM. W porownaniu z standardowym lasem losowym wypada porownywalnie, ma lesze wyniki na czułości. Zdecydowanym minusem naszego modelu jest jego czas uczenia oraz inferencji, ktory jest wielokrotnie większy.
 
-TODO Opisać ktory parametr najwżniejszy i jak ilośc SVM wpływa na wynik
+Według wyników przeprowadzonych eksperymentów, lasy które zawierały wysoką proporcję SVM dawały lepsze wyniki niż te z mnieszą. Jednak warunkiem do tak otrzymanych wyników jest odpowiednie dobranie hiperparametrów SVM.
+
+Z tego wynika, że najważnieszymi hiperparametrami były te dotyczące SVM (C oraz gamma). Hiperparametrem który także mocno wpływał na skuteność modelu był subsample, który odpowiadał za to aby model się nie przeuczał. 
