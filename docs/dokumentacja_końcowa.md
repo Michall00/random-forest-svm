@@ -64,7 +64,7 @@ Dodatkowo, po konsultacjach, użyliśmy biblioteki Optuna do optymalizacji hiper
 
 ### Analiza proporcji SVM w lesie losowym
 
-Przeprowadziliśmy eksperyment w którym testujemy różne proporcje SVM w lesie aby sprawdzić w jaki sposób wpływa ona na skuteczność tego modelu.
+Przeprowadziliśmy eksperyment, w którym testowaliśmy różne proporcje SVM w lesie, aby sprawdzić, jak wpływają one na skuteczność tego modelu.
 
 #### Wyniki dla zbioru Wine Quality
 
@@ -74,17 +74,17 @@ Przeprowadziliśmy eksperyment w którym testujemy różne proporcje SVM w lesie
 
 #### Wyniki dla zbioru Telecom Churn
 
-  Poniższy wykres przedstawia wpływ hiperparametru określającego proporcję SVM w lesie na miarę F1 w wynikach modeli na zbiorze Telecom Churnty
+  Poniższy wykres przedstawia wpływ hiperparametru określającego proporcję SVM w lesie na miarę F1 w wynikach modeli na zbiorze Telecom Churn.
 
 ![Wpływ proporcji SVM w lesie losowym na miarę F1 dla zbioru Churn](../reports/compare_svm_prop_wine.png)
 
 #### Wnioski z eksperymentu
 
 1. Wpływ proporcji SVM na jakość modelu: 
-  - W obu przypadkach (Wine Quality i Churn) obserwujemy, że większy udział SVM w modelu prowadzi do spadku jakości modelu. Miara F1 osiąga wyższe wartości przy niższych proporcjach SVM.
+  - W obu przypadkach (Wine Quality i Churn) obserwujemy, że większy udział SVM w modelu prowadzi do spadku jego jakości. Miara F1 osiąga wyższe wartości przy niższych proporcjach SVM.
 
 2. Hipoteza przyczyn spadku jakości:
-  - SVM jest algorytmem bardziej wymagającym pod względem dostrajania hiperparametrów w porównaniu do drzew decyzyjnych. Domyślne hiperparametry użyte w tym eksperymencie (oferowane przez bibliotekę scikit-learn) mogą nie być odpowiednie dla danych na których przeprowadzamy eksperyment, co skutkuje gorszymi wynikami lasów z większą ilością SVM niż tych z większą ilością drzew. W kolejnych eksperymentach przetestujemy wpływ wszystkich hiperparametrów na jakość modelu co pozwoli nam dokładniej zbadać wpływ hiperparametrów w tym proporcji SVM na jakość modelu. 
+  - SVM jest algorytmem bardziej wymagającym pod względem dostrajania hiperparametrów w porównaniu z drzewami decyzyjnymi. Domyślne hiperparametry użyte w tym eksperymencie (oferowane przez bibliotekę scikit-learn) mogą nie być odpowiednie dla danych, na których przeprowadzamy eksperyment. Skutkuje to gorszymi wynikami modeli, w których przeważają SVM, w porównaniu z modelami o większej liczbie drzew decyzyjnych. W kolejnych eksperymentach przetestujemy wpływ różnych hiperparametrów na jakość modelu. Pozwoli to dokładniej zbadać wpływ zarówno hiperparametrów, jak i proporcji SVM na jakość modelu. 
 
 
 ### Wpływ parametrów modelu na skuteczność
@@ -99,23 +99,18 @@ Przeprowadziliśmy 4 eksperymenty dla różnych zbiorów danych. Zdecydowaliśmy
 
 ---
 
-#### Ważność hiperparametrów:
+**Ważność hiperparametrów**:
 
-- Iris
+![Wykres ważności hiperparametrów dla zbioru danych Iris](../reports/hyperparameters_importance/iris_hyperparameter_importance.png)
 
-![Iris](../reports/hyperparameters_importance/iris_hyperparameter_importance.png)
 
-- Churn
+![Wykres ważności hiperparametrów dla zbioru danych Churn](../reports/hyperparameters_importance/churn_hyperparamaters_importance.png)
 
-![Churn](../reports/hyperparameters_importance/churn_hyperparamaters_importance.png)
 
-- Wine Quality
+![Wykres ważności hiperparametrów dla zbioru danych Wine Quality](../reports/hyperparameters_importance/wine_quality_hyperparameters_importance.png)
 
-![Wine Quality](../reports/hyperparameters_importance/wine_quality_hyperparameters_importance.png)
 
-- Wszystkie
-
-![Wszystkie](../reports/hyperparameters_importance/all_datasets_hyperparameters_importance.png)
+![Wykres ważności hiperparametrów dla eksperyemntu z wykorzystanymi takimi samymi hiperparametrami dla wszystkich 3 zbiorów](../reports/hyperparameters_importance/all_datasets_hyperparameters_importance.png)
 
 
 
@@ -263,34 +258,22 @@ Poniższa tabela przedstawia metryki uzyskane poprzez najlepsze modele dla ekspe
 | Wine         |0,84|     0,8    |  0,86   |   0,83   |
 
 
-##### Macierze Pomyłek
+**Macierze Pomyłek**
 
-- Iris
+![Macierz pomyłek dla zbioru Iris z hiperparametrami dobranymi konkretnie dla tego zbioru](../reports/macierze_pomylek/inne_iris.png)
 
-![Iris z hiperparametrami dobranymi konkretnie dla tego zbioru](../reports/macierze_pomylek/inne_iris.png)
+![Macierz pomyłek dla zbioru Churn z hiperparametrami dobranymi konkretnie dla tego zbioru](../reports/macierze_pomylek/inne_churn.png)
 
-- Churn
-
-![Churn z hiperparametrami dobranymi konkretnie dla tego zbioru](../reports/macierze_pomylek/inne_churn.png)
-
-- Wine
-
-![Wine z hiperparametrami dobranymi konkretnie dla tego zbioru](../reports/macierze_pomylek/inne_wine.png)
+![Macierz pomyłek dla zbioru Wine z hiperparametrami dobranymi konkretnie dla tego zbioru](../reports/macierze_pomylek/inne_wine.png)
 
 ---
 
-- Iris
-
-![Iris z jednakowymi hiperparametrami dobranymi dla wszystkich zbiorów](../reports/macierze_pomylek/te_same_iris.png)
+![Macierz pomyłek dla zbioru Iris z jednakowymi hiperparametrami dobranymi dla wszystkich zbiorów](../reports/macierze_pomylek/te_same_iris.png)
 
 
-- Churn
+![Macierz pomyłek dla zbioru Churn z jednakowymi hiperparametrami dobranymi dla wszystkich zbiorów](../reports/macierze_pomylek/te_same_churn.png)
 
-![Churn z jednakowymi hiperparametrami dobranymi dla wszystkich zbiorów](../reports/macierze_pomylek/te_same_churn.png)
-
-- Wine
-
-![Wine z jednakowymi hiperparametrami dobranymi dla wszystkich zbiorów](../reports/macierze_pomylek/te_same_wine.png)
+![Macierz pomyłek dla zbioru Wine z jednakowymi hiperparametrami dobranymi dla wszystkich zbiorów](../reports/macierze_pomylek/te_same_wine.png)
 
 ---
 
@@ -384,8 +367,9 @@ W kontekście analizy churn (utrata klientów), **Czułość** jest szczególnie
 ### Wyniki dla Wine Quality
 
 Poniższa table przedstawia wyniki modeli na zbiorze Wine Quality.
+
 | Model              | Czas     | Dokładność | F1   | Precyzja | Czułość |
-|---------------------|----------|------------|------|----------|---------|
+|--------------------|----------|------------|------|----------|---------|
 | HybridRandomForest | 13,3 min | 0,80       | 0,85 | 0,81     | 0,90    |
 | RandomForest       | 4,3 s    | 0,84       | 0,87 | 0,86     | 0,89    |
 | SVC                | 4,0 s    | 0,76       | 0,82 | 0,78     | 0,87    |
@@ -440,7 +424,7 @@ RandomForestClassifier okazał się liderem na zbiorze Wine Quality. HybridRando
 ### Wyniki dla Iris   
 
 | Model              | Czas    | Dokładność | F1   | Precyzja | Czułość |
-|---------------------|---------|------------|------|----------|---------|
+|--------------------|---------|------------|------|----------|---------|
 | HybridRandomForest | 1,7 s   | 1,00       | 1,00 | 1,00     | 1,00    |
 | RandomForest       | 0,8 s   | 1,00       | 1,00 | 1,00     | 1,00    |
 | SVC                | 0,6 s   | 1,00       | 1,00 | 1,00     | 1,00    |
